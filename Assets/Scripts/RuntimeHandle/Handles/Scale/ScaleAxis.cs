@@ -34,6 +34,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateCone(p_axis.magnitude * SIZE, .02f, .02f, 8, 1);
             MeshCollider mc = o.AddComponent<MeshCollider>();
+            mc.sharedMesh = MeshUtils.CreateCone(p_axis.magnitude * SIZE, .1f, .02f, 8, 1);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, p_axis);
 
             o = new GameObject();
@@ -80,14 +81,14 @@ namespace RuntimeHandle
                 scale = _startScale + Vector3.Scale(_startScale, _axis) * delta;
                 if (scaleSnap.x != 0) scale.x = Mathf.Round(scale.x / scaleSnap.x) * scaleSnap.x;
                 if (scaleSnap.y != 0) scale.y = Mathf.Round(scale.y / scaleSnap.y) * scaleSnap.y;
-                if (scaleSnap.y != 0) scale.z = Mathf.Round(scale.z / scaleSnap.z) * scaleSnap.z;
+                if (scaleSnap.z != 0) scale.z = Mathf.Round(scale.z / scaleSnap.z) * scaleSnap.z;
             }
             else
             {
                 scale = Vector3.Scale(_startScale, _axis) * delta;
                 if (scaleSnap.x != 0) scale.x = Mathf.Round(scale.x / scaleSnap.x) * scaleSnap.x;
                 if (scaleSnap.y != 0) scale.y = Mathf.Round(scale.y / scaleSnap.y) * scaleSnap.y;
-                if (scaleSnap.y != 0) scale.z = Mathf.Round(scale.z / scaleSnap.z) * scaleSnap.z;
+                if (scaleSnap.z != 0) scale.z = Mathf.Round(scale.z / scaleSnap.z) * scaleSnap.z;
                 scale += _startScale;
             }
 

@@ -72,7 +72,11 @@ namespace RuntimeHandle
 
         public override void StartInteraction()
         {
-            _plane = new Plane(_perp, _parentTransformHandle.target.position);
+            Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL
+                ? _parentTransformHandle.target.rotation * _perp
+                : _perp;
+            
+            _plane = new Plane(rperp, _parentTransformHandle.target.position);
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 

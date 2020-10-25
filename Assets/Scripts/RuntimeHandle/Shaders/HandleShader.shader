@@ -10,7 +10,7 @@ Shader "sHTiF/HandleShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent+1" }
         LOD 100
         
         ZWrite On

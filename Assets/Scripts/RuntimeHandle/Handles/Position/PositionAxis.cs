@@ -1,4 +1,3 @@
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace RuntimeHandle
@@ -31,6 +30,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateCone(2f, .02f, .02f, 8, 1);
             MeshCollider mc = o.AddComponent<MeshCollider>();
+            mc.sharedMesh = MeshUtils.CreateCone(2f, .1f, .02f, 8, 1);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, p_axis);
 
             o = new GameObject();
@@ -50,9 +50,7 @@ namespace RuntimeHandle
         {
             Vector3 mouseVector = (Input.mousePosition - p_previousPosition);
             float mag = mouseVector.magnitude;
-            //        if (mouseVector.magnitude>0) Debug.Log("MVF: "+mouseVector);
             mouseVector = Camera.main.transform.rotation * mouseVector.normalized;
-            //        if (mouseVector.magnitude>0) Debug.Log("MV: "+mouseVector);
 
             Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _perp
@@ -60,10 +58,10 @@ namespace RuntimeHandle
             Vector3 projected = Vector3.ProjectOnPlane(mouseVector, rperp);
 
             projected *= Time.deltaTime * mag * 2; // Bulhar
-            float d = _axis.x * projected.x + _axis.y * projected.y + _axis.z * projected.z;
             Vector3 raxis = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _axis
                 : _axis;
+            float d = raxis.x * projected.x + raxis.y * projected.y + raxis.z * projected.z;
 
             delta += d;
             Vector3 snappingVector = _parentTransformHandle.positionSnap;
