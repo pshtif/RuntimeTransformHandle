@@ -54,14 +54,16 @@ namespace RuntimeHandle
 
             Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL ? _parentTransformHandle.target.rotation * _axis : _axis;
             Vector3 projected = Vector3.ProjectOnPlane(mouseVector, rperp);
-            
+            Debug.Log(rperp+" : "+projected+" : "+mouseVector);
+
             projected *= Time.deltaTime * mag * 2; // Bulhar
-            float d = _perp.x * projected.x + _perp.y * projected.y + _perp.z * projected.z;
+            float d = projected.x + projected.y + projected.z;
             delta += d;
 
             if (_parentTransformHandle.space == HandleSpace.LOCAL)
             {
                 float deg = delta * 180f / Mathf.PI;
+                
                 if (_parentTransformHandle.rotationSnap != 0)
                     deg = Mathf.Round(deg / _parentTransformHandle.rotationSnap) * _parentTransformHandle.rotationSnap;
                 float snappedDelta = deg * Mathf.PI / 180f;
