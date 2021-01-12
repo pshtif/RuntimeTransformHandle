@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace RuntimeHandle
@@ -51,18 +52,18 @@ namespace RuntimeHandle
             Vector3 mouseVector = (Input.mousePosition - p_previousPosition);
             float mag = mouseVector.magnitude;
             mouseVector = Camera.main.transform.rotation * mouseVector.normalized;
-
+        
             Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _perp
                 : _perp;
             Vector3 projected = Vector3.ProjectOnPlane(mouseVector, rperp);
-
-            projected *= Time.deltaTime * mag * 2; // Bulhar
+        
+            projected *= Time.deltaTime * mag * RuntimeTransformHandle.MOUSE_SENSITIVITY;
             Vector3 raxis = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _axis
                 : _axis;
             float d = raxis.x * projected.x + raxis.y * projected.y + raxis.z * projected.z;
-
+        
             delta += d;
             Vector3 snappingVector = _parentTransformHandle.positionSnap;
             float snap = Vector3.Scale(snappingVector, _axis).magnitude;
@@ -76,10 +77,10 @@ namespace RuntimeHandle
             }
             
             _parentTransformHandle.target.position = position;
-
+        
             base.Interact(p_previousPosition);
         }
-
+        
         public override void StartInteraction()
         {
             base.StartInteraction();

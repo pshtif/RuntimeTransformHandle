@@ -67,13 +67,14 @@ namespace RuntimeHandle
                 : _perp;
             Vector3 projected = Vector3.ProjectOnPlane(mouseVector, rperp);
 
-            projected *= Time.deltaTime * mag * 2; // Bulhar
-            float d = _axis.x * projected.x + _axis.y * projected.y + _axis.z * projected.z;
+            projected *= Time.deltaTime * mag * RuntimeTransformHandle.MOUSE_SENSITIVITY;
             Vector3 raxis = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _axis
                 : _axis;
+            float d = raxis.x * projected.x + raxis.y * projected.y + raxis.z * projected.z;
             
             delta += d;
+            Debug.Log(delta);
             Vector3 scaleSnap = _parentTransformHandle.scaleSnap;
             Vector3 scale;
             if (_parentTransformHandle.snappingType == HandleSnappingType.RELATIVE)
@@ -91,7 +92,7 @@ namespace RuntimeHandle
                 if (scaleSnap.z != 0) scale.z = Mathf.Round(scale.z / scaleSnap.z) * scaleSnap.z;
                 scale += _startScale;
             }
-
+            
             _parentTransformHandle.target.localScale = scale;
             
             base.Interact(p_previousPosition);

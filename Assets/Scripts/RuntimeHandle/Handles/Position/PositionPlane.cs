@@ -47,6 +47,7 @@ namespace RuntimeHandle
             Vector3 hitPoint = ray.GetPoint(d);
 
             Vector3 offset = hitPoint + _interactionOffset - _startPosition;
+            
             Vector3 snapping = _parentTransformHandle.positionSnap;
             float snap = Vector3.Scale(snapping, _axis).magnitude;
             if (snap != 0 && _parentTransformHandle.snappingType == HandleSnappingType.RELATIVE)
