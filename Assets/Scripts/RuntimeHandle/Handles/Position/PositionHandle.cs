@@ -35,15 +35,15 @@ namespace RuntimeHandle
             
             if (_parentTransformHandle.axes == HandleAxes.XY || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _planes.Add(new GameObject().AddComponent<PositionPlane>()
-                    .Initialize(_parentTransformHandle, new Vector3(1,1,0), -Vector3.forward, new Color(0,0,1,.2f)));
+                    .Initialize(_parentTransformHandle, Vector3.right, Vector3.up, -Vector3.forward, new Color(0,0,1,.2f)));
 
             if (_parentTransformHandle.axes == HandleAxes.YZ || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _planes.Add(new GameObject().AddComponent<PositionPlane>()
-                    .Initialize(_parentTransformHandle, new Vector3(0, 1, 1), Vector3.right, new Color(1, 0, 0, .2f)));
+                    .Initialize(_parentTransformHandle, Vector3.up, Vector3.forward, Vector3.right, new Color(1, 0, 0, .2f)));
 
             if (_parentTransformHandle.axes == HandleAxes.XZ || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _planes.Add(new GameObject().AddComponent<PositionPlane>()
-                    .Initialize(_parentTransformHandle, new Vector3(1, 0, 1), Vector3.up, new Color(0, 1, 0, .2f)));
+                    .Initialize(_parentTransformHandle, Vector3.right, Vector3.forward, Vector3.up, new Color(0, 1, 0, .2f)));
 
             return this;
         }
