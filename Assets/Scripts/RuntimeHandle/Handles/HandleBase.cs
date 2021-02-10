@@ -19,6 +19,8 @@ namespace RuntimeHandle
 
         protected Material _material;
 
+        protected Vector3 _hitPoint;
+
         protected bool _isInteracting = false;
 
         public float delta;
@@ -39,8 +41,9 @@ namespace RuntimeHandle
             _material.color = p_color;
         }
         
-        public virtual void StartInteraction()
+        public virtual void StartInteraction(Vector3 p_hitPoint)
         {
+            _hitPoint = p_hitPoint;
             InteractionStart?.Invoke();
             _isInteracting = true;
         }

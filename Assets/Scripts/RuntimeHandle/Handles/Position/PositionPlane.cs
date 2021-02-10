@@ -75,7 +75,7 @@ namespace RuntimeHandle
             base.Interact(p_previousPosition);
         }
 
-        public override void StartInteraction()
+        public override void StartInteraction(Vector3 p_hitPoint)
         {
             Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL
                 ? _parentTransformHandle.target.rotation * _perp

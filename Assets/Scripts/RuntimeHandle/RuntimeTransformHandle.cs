@@ -23,10 +23,10 @@ namespace RuntimeHandle
         public float autoScaleFactor = 1;
         public Camera handleCamera;
 
-        private Vector3 _previousPosition;
+        private Vector3 _previousMousePosition;
         private HandleBase _previousAxis;
         
-        private HandleBase _draggingAxis;
+        private HandleBase _draggingHandle;
 
         private HandleType _previousType;
         private HandleAxes _previousAxes;
@@ -68,7 +68,7 @@ namespace RuntimeHandle
 
         void Clear()
         {
-            _draggingAxis = null;
+            _draggingHandle = null;
             
             if (_positionHandle) _positionHandle.Destroy();
             if (_rotationHandle) _rotationHandle.Destroy();
@@ -89,28 +89,30 @@ namespace RuntimeHandle
                 _previousAxes = axes;
             }
 
-            HandleBase axis = GetAxis();
+            HandleBase handle = null;
+            Vector3 hitPoint = Vector3.zero;
+            GetHandle(ref handle, ref hitPoint);
 
-            HandleOverEffect(axis);
+            HandleOverEffect(handle);
 
-            if (Input.GetMouseButton(0) && _draggingAxis != null)
+            if (Input.GetMouseButton(0) && _draggingHandle != null)
             {
-                _draggingAxis.Interact(_previousPosition);
+                _draggingHandle.Interact(_previousMousePosition);
             }
 
-            if (Input.GetMouseButtonDown(0) && axis != null)
+            if (Input.GetMouseButtonDown(0) && handle != null)
             {
-                _draggingAxis = axis;
-                _draggingAxis.StartInteraction();
+                _draggingHandle = handle;
+                _draggingHandle.StartInteraction(hitPoint);
             }
 
-            if (Input.GetMouseButtonUp(0) && _draggingAxis != null)
+            if (Input.GetMouseButtonUp(0) && _draggingHandle != null)
             {
-                _draggingAxis.EndInteraction();
-                _draggingAxis = null;
+                _draggingHandle.EndInteraction();
+                _draggingHandle = null;
             }
 
-            _previousPosition = Input.mousePosition;
+            _previousMousePosition = Input.mousePosition;
 
             transform.position = target.transform.position;
             if (space == HandleSpace.LOCAL || type == HandleType.SCALE)
@@ -125,12 +127,12 @@ namespace RuntimeHandle
 
         void HandleOverEffect(HandleBase p_axis)
         {
-            if (_draggingAxis == null && _previousAxis != null && _previousAxis != p_axis)
+            if (_draggingHandle == null && _previousAxis != null && _previousAxis != p_axis)
             {
                 _previousAxis.SetDefaultColor();
             }
 
-            if (p_axis != null && _draggingAxis == null)
+            if (p_axis != null && _draggingHandle == null)
             {
                 p_axis.SetColor(Color.yellow);
             }
@@ -138,24 +140,23 @@ namespace RuntimeHandle
             _previousAxis = p_axis;
         }
 
-        private HandleBase GetAxis()
+        private void GetHandle(ref HandleBase p_handle, ref Vector3 p_hitPoint)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray);
             if (hits.Length == 0)
-                return null;
+                return;
 
             foreach (RaycastHit hit in hits)
             {
-                HandleBase axis = hit.collider.gameObject.GetComponentInParent<HandleBase>();
+                p_handle = hit.collider.gameObject.GetComponentInParent<HandleBase>();
 
-                if (axis != null)
+                if (p_handle != null)
                 {
-                    return axis;
+                    p_hitPoint = hit.point;
+                    return;
                 }
             }
-
-            return null;
         }
 
         static public RuntimeTransformHandle Create(Transform p_target, HandleType p_handleType)

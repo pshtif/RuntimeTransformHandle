@@ -10,6 +10,53 @@ namespace RuntimeHandle
      */
 	public class MeshUtils
 	{
+		static public Mesh CreateArc(Vector3 p_center, Vector3 p_startPoint, Vector3 p_axis, float p_radius, float p_angle, int p_segmentCount)
+		{
+			Mesh mesh = new Mesh();
+			
+			Vector3[] vertices = new Vector3[p_segmentCount+2];
+
+			Vector3 startVector = (p_startPoint - p_center).normalized * p_radius;
+			for (int i = 0; i<=p_segmentCount; i++)
+			{
+				float rad = (float) i / p_segmentCount * p_angle;
+				Vector3 v = Quaternion.AngleAxis(rad*180f/Mathf.PI, p_axis) * startVector;
+				vertices[i] = v + p_center;
+			}
+			vertices[p_segmentCount+1] = p_center;
+			
+			Vector3[] normals = new Vector3[vertices.Length];
+			for( int n = 0; n < normals.Length; n++ )
+				normals[n] = Vector3.up;
+
+			Vector2[] uvs = new Vector2[vertices.Length];
+			for (int i = 0; i<=p_segmentCount; i++)
+			{
+				float rad = (float) i / p_segmentCount * p_angle;
+				uvs[i] = new Vector2(Mathf.Cos(rad) * .5f + .5f, Mathf.Sin(rad) * .5f + .5f);
+			}
+			uvs[p_segmentCount + 1] = Vector2.one / 2f;
+			
+			int[] triangles = new int[ p_segmentCount * 3 ];
+			for (int i = 0; i < p_segmentCount; i++)
+			{
+				int index = i * 3;
+				triangles[index] = p_segmentCount+1;
+				triangles[index+1] = i;
+				triangles[index+2] = i + 1;
+			}
+			
+			mesh.vertices = vertices;
+			mesh.normals = normals;
+			mesh.uv = uvs;
+			mesh.triangles = triangles;
+ 
+			mesh.RecalculateBounds();
+			mesh.Optimize();
+			
+			return mesh;
+		}
+		
 		static public Mesh CreateArc(float p_radius, float p_angle, int p_segmentCount)
 		{
 			Mesh mesh = new Mesh();

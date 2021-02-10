@@ -98,9 +98,9 @@ namespace RuntimeHandle
             base.Interact(p_previousPosition);
         }
 
-        public override void StartInteraction()
+        public override void StartInteraction(Vector3 p_hitPoint)
         {
-            base.StartInteraction();
+            base.StartInteraction(p_hitPoint);
             _startScale = _parentTransformHandle.target.localScale;
         }
     }
