@@ -444,7 +444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   axes: 6
-  space: 0
+  space: 1
   type: 1
   snappingType: 0
   positionSnap: {x: 0, y: 0, z: 0}

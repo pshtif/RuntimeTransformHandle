@@ -1,0 +1,17 @@
+{
+  "name": "com.shtif.runtimetransformhandle",
+  "displayName": "Runtime Transform Handle",
+  "version": "0.1.1",
+  "unity": "2019.4",
+  "description": "Transform handles/gizmos for runtime use.",
+  "author": {
+	"name": "Peter @sHTiF Stefcek",
+	"email": "psthif@gmail.com"
+  },
+  "keywords": [ 
+	"package",
+	"unity"
+  ],
+  "dependencies": {
+  }
+}
