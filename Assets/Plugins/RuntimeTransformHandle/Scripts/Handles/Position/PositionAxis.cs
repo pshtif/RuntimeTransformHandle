@@ -8,6 +8,8 @@ namespace RuntimeHandle
      */
     public class PositionAxis : HandleBase
     {
+        public static float HITZONE_SCALE = 1f;
+        
         protected Vector3 _startPosition;
         protected Vector3 _axis;
         protected Vector3 _perp;
@@ -31,7 +33,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateCone(2f, .02f, .02f, 8, 1);
             MeshCollider mc = o.AddComponent<MeshCollider>();
-            mc.sharedMesh = MeshUtils.CreateCone(2f, .1f, .02f, 8, 1);
+            mc.sharedMesh = MeshUtils.CreateCone(2f, .1f * HITZONE_SCALE, .02f * HITZONE_SCALE, 8, 1);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, p_axis);
 
             o = new GameObject();

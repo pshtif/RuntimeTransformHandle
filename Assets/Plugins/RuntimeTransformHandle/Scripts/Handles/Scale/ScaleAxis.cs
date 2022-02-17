@@ -9,6 +9,8 @@ namespace RuntimeHandle
      */
     public class ScaleAxis : HandleBase
     {
+        public static float HITZONE_SCALE = 1f;
+        
         private const float SIZE = 2;
         
         private Vector3 _axis;
@@ -34,7 +36,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateCone(p_axis.magnitude * SIZE, .02f, .02f, 8, 1);
             MeshCollider mc = o.AddComponent<MeshCollider>();
-            mc.sharedMesh = MeshUtils.CreateCone(p_axis.magnitude * SIZE, .1f, .02f, 8, 1);
+            mc.sharedMesh = MeshUtils.CreateCone(p_axis.magnitude * SIZE, .1f * HITZONE_SCALE, .02f * HITZONE_SCALE, 8, 1);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, p_axis);
 
             o = new GameObject();

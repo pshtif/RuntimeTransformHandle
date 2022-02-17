@@ -8,6 +8,8 @@ namespace RuntimeHandle
      */
     public class RotationAxis : HandleBase
     {
+        public static float HITZONE_SCALE = 1f;
+        
         private Mesh _arcMesh;
         private Material _arcMaterial;
         private Vector3 _axis;
@@ -36,7 +38,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateTorus(2f, .02f, 32, 6);
             MeshCollider mc = o.AddComponent<MeshCollider>();
-            mc.sharedMesh = MeshUtils.CreateTorus(2f, .1f, 32, 6);
+            mc.sharedMesh = MeshUtils.CreateTorus(2f, .1f*HITZONE_SCALE, 32, 6);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, _axis);
             return this;
         }
