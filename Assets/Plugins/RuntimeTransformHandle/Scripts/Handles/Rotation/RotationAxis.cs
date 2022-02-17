@@ -52,7 +52,7 @@ namespace RuntimeHandle
             Vector3 planeNormal = _parentTransformHandle.space == HandleSpace.LOCAL ? _parentTransformHandle.target.rotation * _axis : _axis;
             Vector3 projected = Vector3.ProjectOnPlane(mouseVector, planeNormal);
             
-            projected *= Time.deltaTime * mag * 2; // Bulhar
+            projected *= Time.deltaTime * mag * RuntimeTransformHandle.MOUSE_SENSITIVITY;
             float d = projected.x + projected.y + projected.z;
             delta += d;
 
