@@ -8,18 +8,16 @@ namespace RuntimeHandle
      */
     public class PositionAxis : HandleBase
     {
-        public static float HITZONE_SCALE = 1f;
-        
         protected Vector3 _startPosition;
         protected Vector3 _axis;
-        protected Vector3 _perp;
 
-        public PositionAxis Initialize(RuntimeTransformHandle p_runtimeHandle, Vector3 p_axis, Vector3 p_perp,
-            Color p_color)
+        private Vector3 _interactionOffset;
+        private Ray     _raxisRay;
+
+        public PositionAxis Initialize(RuntimeTransformHandle p_runtimeHandle, Vector3 p_axis, Color p_color)
         {
             _parentTransformHandle = p_runtimeHandle;
             _axis = p_axis;
-            _perp = p_perp;
             _defaultColor = p_color;
             
             InitializeMaterial();
@@ -33,7 +31,7 @@ namespace RuntimeHandle
             MeshFilter mf = o.AddComponent<MeshFilter>();
             mf.mesh = MeshUtils.CreateCone(2f, .02f, .02f, 8, 1);
             MeshCollider mc = o.AddComponent<MeshCollider>();
-            mc.sharedMesh = MeshUtils.CreateCone(2f, .1f * HITZONE_SCALE, .02f * HITZONE_SCALE, 8, 1);
+            mc.sharedMesh = MeshUtils.CreateCone(2f, .1f, .02f, 8, 1);
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, p_axis);
 
             o = new GameObject();
@@ -51,42 +49,52 @@ namespace RuntimeHandle
 
         public override void Interact(Vector3 p_previousPosition)
         {
-            Vector3 mouseVector = (Input.mousePosition - p_previousPosition);
-            float mag = mouseVector.magnitude;
-            mouseVector = Camera.main.transform.rotation * mouseVector.normalized;
-        
-            Vector3 rperp = _parentTransformHandle.space == HandleSpace.LOCAL
-                ? _parentTransformHandle.target.rotation * _perp
-                : _perp;
-            Vector3 projected = Vector3.ProjectOnPlane(mouseVector, rperp);
-        
-            projected *= Time.deltaTime * mag * RuntimeTransformHandle.MOUSE_SENSITIVITY;
-            Vector3 raxis = _parentTransformHandle.space == HandleSpace.LOCAL
-                ? _parentTransformHandle.target.rotation * _axis
-                : _axis;
-            float d = raxis.x * projected.x + raxis.y * projected.y + raxis.z * projected.z;
-        
-            delta += d;
-            Vector3 snappingVector = _parentTransformHandle.positionSnap;
-            float snap = Vector3.Scale(snappingVector, _axis).magnitude;
-            float snappedDelta = (snap == 0 || _parentTransformHandle.snappingType == HandleSnappingType.ABSOLUTE) ? delta : Mathf.Round(delta / snap) * snap;
-            Vector3 position = _startPosition + raxis * snappedDelta;
+            Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            float   closestT = HandleMathUtils.ClosestPointOnRay(_raxisRay, cameraRay);
+            Vector3 hitPoint = _raxisRay.GetPoint(closestT);
+            
+            Vector3 offset = hitPoint + _interactionOffset - _startPosition;
+            
+            Vector3 snapping = _parentTransformHandle.positionSnap;
+            float   snap     = Vector3.Scale(snapping, _axis).magnitude;
+            if (snap != 0 && _parentTransformHandle.snappingType == HandleSnappingType.RELATIVE)
+            {
+                offset = (Mathf.Round(offset.magnitude / snap) * snap) * offset.normalized; 
+            }
+
+            Vector3 position = _startPosition + offset;
+            
             if (snap != 0 && _parentTransformHandle.snappingType == HandleSnappingType.ABSOLUTE)
             {
-                if (snappingVector.x != 0) position.x = Mathf.Round(position.x / snappingVector.x) * snappingVector.x;
-                if (snappingVector.y != 0) position.y = Mathf.Round(position.y / snappingVector.y) * snappingVector.y;
-                if (snappingVector.z != 0) position.z = Mathf.Round(position.z / snappingVector.z) * snappingVector.z;
+                if (snapping.x != 0) position.x = Mathf.Round(position.x / snapping.x) * snapping.x;
+                if (snapping.y != 0) position.y = Mathf.Round(position.y / snapping.y) * snapping.y;
+                if (snapping.x != 0) position.z = Mathf.Round(position.z / snapping.z) * snapping.z;
             }
             
             _parentTransformHandle.target.position = position;
-        
+
             base.Interact(p_previousPosition);
         }
         
         public override void StartInteraction(Vector3 p_hitPoint)
         {
             base.StartInteraction(p_hitPoint);
+            
             _startPosition = _parentTransformHandle.target.position;
+
+            Vector3 raxis = _parentTransformHandle.space == HandleSpace.LOCAL
+                ? _parentTransformHandle.target.rotation * _axis
+                : _axis;
+            
+            _raxisRay = new Ray(_startPosition, raxis);
+
+            Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            float closestT = HandleMathUtils.ClosestPointOnRay(_raxisRay, cameraRay);
+            Vector3 hitPoint = _raxisRay.GetPoint(closestT);
+            
+            _interactionOffset = _startPosition - hitPoint;
         }
     }
 }

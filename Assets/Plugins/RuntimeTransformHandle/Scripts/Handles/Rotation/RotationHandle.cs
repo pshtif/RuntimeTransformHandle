@@ -20,15 +20,15 @@ namespace RuntimeHandle
             
             if (_parentTransformHandle.axes == HandleAxes.X || _parentTransformHandle.axes == HandleAxes.XY || _parentTransformHandle.axes == HandleAxes.XZ || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _axes.Add(new GameObject().AddComponent<RotationAxis>()
-                    .Initialize(_parentTransformHandle, Vector3.right, Vector3.up, Color.red));
+                    .Initialize(_parentTransformHandle, Vector3.right, Color.red));
             
             if (_parentTransformHandle.axes == HandleAxes.Y || _parentTransformHandle.axes == HandleAxes.XY || _parentTransformHandle.axes == HandleAxes.YZ || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _axes.Add(new GameObject().AddComponent<RotationAxis>()
-                    .Initialize(_parentTransformHandle, Vector3.up, Vector3.right, Color.green));
+                    .Initialize(_parentTransformHandle, Vector3.up, Color.green));
 
             if (_parentTransformHandle.axes == HandleAxes.Z || _parentTransformHandle.axes == HandleAxes.YZ || _parentTransformHandle.axes == HandleAxes.XZ || _parentTransformHandle.axes == HandleAxes.XYZ)
                 _axes.Add(new GameObject().AddComponent<RotationAxis>()
-                    .Initialize(_parentTransformHandle, Vector3.forward, Vector3.up, Color.blue));
+                    .Initialize(_parentTransformHandle, Vector3.forward, Color.blue));
 
             return this;
         }
