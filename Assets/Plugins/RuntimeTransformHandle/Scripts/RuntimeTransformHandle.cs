@@ -91,7 +91,7 @@ namespace RuntimeHandle
             Vector3 hitPoint = Vector3.zero;
             GetHandle(ref handle, ref hitPoint);
 
-            HandleOverEffect(handle);
+            HandleOverEffect(handle, hitPoint);
 
             if (Input.GetMouseButton(0) && _draggingHandle != null)
             {
@@ -123,14 +123,14 @@ namespace RuntimeHandle
             }
         }
 
-        void HandleOverEffect(HandleBase p_axis)
+        void HandleOverEffect(HandleBase p_axis, Vector3 p_hitPoint)
         {
-            if (_draggingHandle == null && _previousAxis != null && _previousAxis != p_axis)
+            if (_draggingHandle == null && _previousAxis != null && (_previousAxis != p_axis || !_previousAxis.CanInteract(p_hitPoint)))
             {
                 _previousAxis.SetDefaultColor();
             }
 
-            if (p_axis != null && _draggingHandle == null)
+            if (p_axis != null && _draggingHandle == null && p_axis.CanInteract(p_hitPoint))
             {
                 p_axis.SetColor(Color.yellow);
             }

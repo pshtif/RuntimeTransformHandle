@@ -39,6 +39,20 @@ namespace RuntimeHandle
             o.transform.localRotation = Quaternion.FromToRotation(Vector3.up, _axis);
             return this;
         }
+        
+        protected override void InitializeMaterial()
+        {
+            _material = new Material(Shader.Find("sHTiF/AdvancedHandleShader"));
+            _material.color = _defaultColor;
+        }
+
+        public void Update()
+        {
+            _material.SetVector("_CameraPosition", _parentTransformHandle.handleCamera.transform.position);
+            _material.SetFloat("_CameraDistance",
+                (_parentTransformHandle.handleCamera.transform.position - _parentTransformHandle.transform.position)
+                .magnitude);
+        }
 
         public override void Interact(Vector3 p_previousPosition)
         {
@@ -78,9 +92,20 @@ namespace RuntimeHandle
 
             base.Interact(p_previousPosition);
         }
+        
+        public override bool CanInteract(Vector3 p_hitPoint)
+        {
+            var cameraDistance = (_parentTransformHandle.transform.position - _parentTransformHandle.handleCamera.transform.position).magnitude;
+            var pointDistance = (p_hitPoint - _parentTransformHandle.handleCamera.transform.position).magnitude;
+            return pointDistance <= cameraDistance;
+        }
 
         public override void StartInteraction(Vector3 p_hitPoint)
         {
+            if (!CanInteract(p_hitPoint))
+                return;
+           
+            
             base.StartInteraction(p_hitPoint);
             
             _startRotation = _parentTransformHandle.space == HandleSpace.LOCAL ? _parentTransformHandle.target.localRotation : _parentTransformHandle.target.rotation;

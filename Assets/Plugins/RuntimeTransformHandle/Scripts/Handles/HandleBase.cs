@@ -25,7 +25,7 @@ namespace RuntimeHandle
 
         public float delta;
 
-        protected void InitializeMaterial()
+        protected virtual void InitializeMaterial()
         {
             _material = new Material(Shader.Find("sHTiF/HandleShader"));
             _material.color = _defaultColor;
@@ -48,6 +48,11 @@ namespace RuntimeHandle
             _isInteracting = true;
         }
 
+        public virtual bool CanInteract(Vector3 p_hitPoint)
+        {
+            return true;
+        }
+        
         public virtual void Interact(Vector3 p_previousPosition)
         {
             InteractionUpdate?.Invoke(delta);

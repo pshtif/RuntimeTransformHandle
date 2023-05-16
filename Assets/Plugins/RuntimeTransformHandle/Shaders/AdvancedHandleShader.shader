@@ -2,11 +2,13 @@
  * Created by Peter @sHTiF Stefcek 20.10.2020
  */
 
-Shader "sHTiF/HandleShader"
+Shader "sHTiF/AdvancedHandleShader"
 {
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
+        _CameraPosition ("Camera Position", Vector) = (0,0,0,0)
+        _CameraDistance ("Camera Distance", float) = 0
     }
     SubShader
     {
@@ -26,28 +28,35 @@ Shader "sHTiF/HandleShader"
 
             #include "UnityCG.cginc"
 
-            struct appdata
+            struct IN
             {
                 float4 vertex : POSITION;
             };
 
-            struct v2f
+            struct OUT
             {
                 float4 vertex : SV_POSITION;
+                float4 positionWS : TEXCOORD1;
             };
 
             float4 _Color;
+            float3 _CameraPosition;
+            float _CameraDistance;
 
-            v2f vert (appdata v)
+            OUT vert (IN v)
             {
-                v2f o;
+                OUT o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
+                o.positionWS = mul(unity_ObjectToWorld, float4(v.vertex.xyz,1.0));
                 
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag (OUT i) : SV_Target
             {
+                if (distance(i.positionWS, _CameraPosition) > _CameraDistance)
+                    return float4(0,0,0,0.1f);
+                
                 return _Color;
             }
             ENDCG
