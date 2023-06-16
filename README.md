@@ -3,27 +3,9 @@
 Runtime transform handle for Unity.
 
 ## Installation
+#### Install package from git url
 
-#### Install Unity Package Manager
-
-Using Package Manager is now the prefferred method, all releases should be updated immediately.
-
-Add Scoped Registry into Package manager using Project Settings => Package Manager as below:  
-Name:  
-```
-Shtif Registry
-```  
-URL:  
-```
-http://package.binaryego.com:4873
-```  
-Scopes:  
-```
-com.shtif
-```
-
-![Package Settings](https://i.imgur.com/Y85kaBn.png)
-
-After this you can find the Runtime Transform Handle in My Registries inside Package Manager.
-
-![Package Manager](https://i.imgur.com/WZ19e94.png)
++ Click window -> Package Manager
++ ![image](https://github.com/pshtif/RuntimeTransformHandle/assets/68388374/4016716d-29da-4abd-b5e5-9674b48e85ec)
++ Paste `https://github.com/manaporkun/UnityRuntimeTransformHandles.git?path=/Packages/runtime-transform-handles/`
++ ![image](https://github.com/pshtif/RuntimeTransformHandle/assets/68388374/42a40719-6609-4e39-908a-9a0f98e7e438)
