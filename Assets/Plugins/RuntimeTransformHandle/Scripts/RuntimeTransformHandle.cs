@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.UI;
 #endif
+
 namespace RuntimeHandle
 {
     /**
@@ -40,10 +37,6 @@ namespace RuntimeHandle
 
         public Transform target;
 
-#if ENABLE_INPUT_SYSTEM
-        public static InputSystemUIInputModule inputSystemUIInputModule;
-#endif
-
         void Start()
         {
             if (handleCamera == null)
@@ -53,17 +46,6 @@ namespace RuntimeHandle
 
             if (target == null)
                 target = transform;
-
-#if ENABLE_INPUT_SYSTEM
-            if (!inputSystemUIInputModule && EventSystem.current)
-                inputSystemUIInputModule = EventSystem.current.GetComponent<InputSystemUIInputModule>();
-
-            if (!inputSystemUIInputModule)
-            {
-                Debug.LogError("Runtime transform handles require a InputSystemUIInputModule", gameObject);
-                return;
-            }
-#endif
 
             CreateHandles();
         }
@@ -146,7 +128,7 @@ namespace RuntimeHandle
         public static bool GetPointerDown()
         {
 #if ENABLE_INPUT_SYSTEM
-            return inputSystemUIInputModule.leftClick.action.WasPressedThisFrame();
+            return Mouse.current.leftButton.wasPressedThisFrame;
 #else
             return Input.GetMouseButtonDown(0);
 #endif
@@ -155,7 +137,7 @@ namespace RuntimeHandle
         public static bool PointerIsDown()
         {
 #if ENABLE_INPUT_SYSTEM
-            return inputSystemUIInputModule.leftClick.action.IsPressed();
+            return Mouse.current.leftButton.isPressed;
 #else
             return Input.GetMouseButton(0);
 #endif
@@ -164,7 +146,7 @@ namespace RuntimeHandle
         public static bool GetPointerUp()
         {
 #if ENABLE_INPUT_SYSTEM
-            return inputSystemUIInputModule.leftClick.action.WasReleasedThisFrame();
+            return Mouse.current.leftButton.wasReleasedThisFrame;
 #else
             return Input.GetMouseButtonUp(0);
 #endif
@@ -173,7 +155,7 @@ namespace RuntimeHandle
         public static Vector3 GetMousePosition()
         {
 #if ENABLE_INPUT_SYSTEM
-            return inputSystemUIInputModule.point.action.ReadValue<Vector2>();
+            return Mouse.current.position.ReadValue();
 #else
             return Input.mousePosition;
 #endif
