@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -36,6 +37,10 @@ namespace RuntimeHandle
         private ScaleHandle _scaleHandle;
 
         public Transform target;
+
+        public UnityEvent startedDraggingHandle = new UnityEvent();
+        public UnityEvent draggingHandle = new UnityEvent();
+        public UnityEvent endedDraggingHandle = new UnityEvent();
 
         void Start()
         {
@@ -98,18 +103,21 @@ namespace RuntimeHandle
             if (PointerIsDown() && _draggingHandle != null)
             {
                 _draggingHandle.Interact(_previousMousePosition);
+                draggingHandle.Invoke();
             }
 
             if (GetPointerDown() && handle != null)
             {
                 _draggingHandle = handle;
                 _draggingHandle.StartInteraction(hitPoint);
+                startedDraggingHandle.Invoke();
             }
 
             if (GetPointerUp() && _draggingHandle != null)
             {
                 _draggingHandle.EndInteraction();
                 _draggingHandle = null;
+                endedDraggingHandle.Invoke();
             }
 
             _previousMousePosition = GetMousePosition();
