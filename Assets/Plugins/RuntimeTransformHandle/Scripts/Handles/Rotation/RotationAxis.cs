@@ -42,7 +42,7 @@ namespace RuntimeHandle
         
         protected override void InitializeMaterial()
         {
-            _material = new Material(Shader.Find("sHTiF/AdvancedHandleShader"));
+            _material = new Material(Resources.Load("Shaders/AdvancedHandleShader") as Shader);
             _material.color = _defaultColor;
         }
 

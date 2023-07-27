@@ -27,7 +27,7 @@ namespace RuntimeHandle
 
         protected virtual void InitializeMaterial()
         {
-            _material = new Material(Shader.Find("sHTiF/HandleShader"));
+            _material = new Material(Resources.Load("Shaders/HandleShader") as Shader);
             _material.color = _defaultColor;
         }
         
