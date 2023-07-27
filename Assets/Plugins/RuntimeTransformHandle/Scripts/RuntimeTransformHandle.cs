@@ -39,7 +39,7 @@ namespace RuntimeHandle
         public Transform target;
 
         public UnityEvent startedDraggingHandle = new UnityEvent();
-        public UnityEvent draggingHandle = new UnityEvent();
+        public UnityEvent isDraggingHandle = new UnityEvent();
         public UnityEvent endedDraggingHandle = new UnityEvent();
 
         void Start()
@@ -103,7 +103,7 @@ namespace RuntimeHandle
             if (PointerIsDown() && _draggingHandle != null)
             {
                 _draggingHandle.Interact(_previousMousePosition);
-                draggingHandle.Invoke();
+                isDraggingHandle.Invoke();
             }
 
             if (GetPointerDown() && handle != null)
