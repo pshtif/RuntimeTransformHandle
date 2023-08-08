@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace RuntimeHandle
 {
@@ -78,7 +80,7 @@ namespace RuntimeHandle
             if (autoScale)
                 transform.localScale =
                     Vector3.one * (Vector3.Distance(handleCamera.transform.position, transform.position) * autoScaleFactor) / 15;
-            
+
             if (_previousType != type || _previousAxes != axes)
             {
                 Clear();
@@ -93,24 +95,24 @@ namespace RuntimeHandle
 
             HandleOverEffect(handle, hitPoint);
 
-            if (Input.GetMouseButton(0) && _draggingHandle != null)
+            if (PointerIsDown() && _draggingHandle != null)
             {
                 _draggingHandle.Interact(_previousMousePosition);
             }
 
-            if (Input.GetMouseButtonDown(0) && handle != null)
+            if (GetPointerDown() && handle != null)
             {
                 _draggingHandle = handle;
                 _draggingHandle.StartInteraction(hitPoint);
             }
 
-            if (Input.GetMouseButtonUp(0) && _draggingHandle != null)
+            if (GetPointerUp() && _draggingHandle != null)
             {
                 _draggingHandle.EndInteraction();
                 _draggingHandle = null;
             }
 
-            _previousMousePosition = Input.mousePosition;
+            _previousMousePosition = GetMousePosition();
 
             transform.position = target.transform.position;
             if (space == HandleSpace.LOCAL || type == HandleType.SCALE)
@@ -121,6 +123,42 @@ namespace RuntimeHandle
             {
                 transform.rotation = Quaternion.identity;
             }
+        }
+
+        public static bool GetPointerDown()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Mouse.current.leftButton.wasPressedThisFrame;
+#else
+            return Input.GetMouseButtonDown(0);
+#endif
+        }
+
+        public static bool PointerIsDown()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Mouse.current.leftButton.isPressed;
+#else
+            return Input.GetMouseButton(0);
+#endif
+        }
+
+        public static bool GetPointerUp()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Mouse.current.leftButton.wasReleasedThisFrame;
+#else
+            return Input.GetMouseButtonUp(0);
+#endif
+        }
+
+        public static Vector3 GetMousePosition()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Mouse.current.position.ReadValue();
+#else
+            return Input.mousePosition;
+#endif
         }
 
         void HandleOverEffect(HandleBase p_axis, Vector3 p_hitPoint)
@@ -140,7 +178,7 @@ namespace RuntimeHandle
 
         private void GetHandle(ref HandleBase p_handle, ref Vector3 p_hitPoint)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(GetMousePosition());
             RaycastHit[] hits = Physics.RaycastAll(ray);
             if (hits.Length == 0)
                 return;

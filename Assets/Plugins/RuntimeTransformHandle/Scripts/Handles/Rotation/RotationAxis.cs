@@ -56,7 +56,7 @@ namespace RuntimeHandle
 
         public override void Interact(Vector3 p_previousPosition)
         {
-            Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray cameraRay = Camera.main.ScreenPointToRay(RuntimeTransformHandle.GetMousePosition());
             
             if (!_axisPlane.Raycast(cameraRay, out float hitT))
             {
@@ -127,7 +127,7 @@ namespace RuntimeHandle
             _axisPlane = new Plane(_rotatedAxis, _parentTransformHandle.target.position);
 
             Vector3 startHitPoint;
-            Ray     cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray     cameraRay = Camera.main.ScreenPointToRay(RuntimeTransformHandle.GetMousePosition());
             if (_axisPlane.Raycast(cameraRay, out float hitT))
             {
                 startHitPoint = cameraRay.GetPoint(hitT);
