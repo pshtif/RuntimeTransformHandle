@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -25,7 +26,7 @@ namespace RuntimeHandle
 
         private Vector3 _previousMousePosition;
         private HandleBase _previousAxis;
-        
+
         private HandleBase _draggingHandle;
 
         private HandleType _previousType;
@@ -37,6 +38,12 @@ namespace RuntimeHandle
 
         public Transform target;
 
+        public UnityEvent startedDraggingHandle = new UnityEvent();
+        public UnityEvent isDraggingHandle = new UnityEvent();
+        public UnityEvent endedDraggingHandle = new UnityEvent();
+
+        [SerializeField] private bool disableWhenNoTarget;
+
         void Start()
         {
             if (handleCamera == null)
@@ -46,6 +53,9 @@ namespace RuntimeHandle
 
             if (target == null)
                 target = transform;
+
+            if (disableWhenNoTarget && target == transform)
+                gameObject.SetActive(false);
 
             CreateHandles();
         }
@@ -69,7 +79,7 @@ namespace RuntimeHandle
         void Clear()
         {
             _draggingHandle = null;
-            
+
             if (_positionHandle) _positionHandle.Destroy();
             if (_rotationHandle) _rotationHandle.Destroy();
             if (_scaleHandle) _scaleHandle.Destroy();
@@ -98,18 +108,21 @@ namespace RuntimeHandle
             if (PointerIsDown() && _draggingHandle != null)
             {
                 _draggingHandle.Interact(_previousMousePosition);
+                isDraggingHandle.Invoke();
             }
 
             if (GetPointerDown() && handle != null)
             {
                 _draggingHandle = handle;
                 _draggingHandle.StartInteraction(hitPoint);
+                startedDraggingHandle.Invoke();
             }
 
             if (GetPointerUp() && _draggingHandle != null)
             {
                 _draggingHandle.EndInteraction();
                 _draggingHandle = null;
+                endedDraggingHandle.Invoke();
             }
 
             _previousMousePosition = GetMousePosition();
@@ -203,5 +216,64 @@ namespace RuntimeHandle
 
             return runtimeTransformHandle;
         }
+
+        #region public methods to control handles
+        public void SetTarget(Transform newTarget)
+        {
+            target = newTarget;
+        }
+
+        public void SetTarget(GameObject newTarget)
+        {
+            target = newTarget.transform;
+
+            if (target == null)
+                target = transform;
+
+            if (disableWhenNoTarget && target == transform)
+                gameObject.SetActive(false);
+            else if(disableWhenNoTarget && target != transform)
+                gameObject.SetActive(true);
+        }
+
+        public void SetHandleMode(int mode)
+        {
+            SetHandleMode((HandleType)mode);
+        }
+
+        public void SetHandleMode(HandleType mode)
+        {
+            type = mode;
+        }
+
+        public void EnableXAxis(bool enable)
+        {
+            if (enable)
+                axes |= HandleAxes.X;
+            else
+                axes &= ~HandleAxes.X;
+        }
+
+        public void EnableYAxis(bool enable)
+        {
+            if (enable)
+                axes |= HandleAxes.Y;
+            else
+                axes &= ~HandleAxes.Y;
+        }
+
+        public void EnableZAxis(bool enable)
+        {
+            if (enable)
+                axes |= HandleAxes.Z;
+            else
+                axes &= ~HandleAxes.Z;
+        }
+
+        public void SetAxis(HandleAxes newAxes)
+        {
+            axes = newAxes;
+        }
+        #endregion
     }
 }
